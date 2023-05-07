@@ -6,6 +6,9 @@ import Input from "../../components/inputs/Input";
 import Button from "../../components/Button";
 import AuthSocialButton from "./AuthSocialButton";
 import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { signIn } from "next-auth/react"
 
 type Variant = "LOGIN" | "REGISTER";
 
@@ -37,18 +40,40 @@ const AuthForm = () => {
     setIsLoading(true);
 
     if (variant === "REGISTER") {
-      // Axios Regiter
+      axios.post("/api/register", data).catch(() => toast.error('Gatau, tapi ada yang salah nih!')).finally(() => setIsLoading(false));
     }
 
     if (variant === "LOGIN") {
-      // NextAuth SignIn
+      signIn('credentials', {
+        ...data,
+        redirect: false
+      })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error('Email atau Password Salah!')
+        }
+
+        if (callback?.ok && !callback?.error) {
+          toast.success('Yeyyy masuk 😆')
+        }
+      })
+      .finally(() => setIsLoading(false));
     }
   };
 
   const socialAction = (action: string) => {
     setIsLoading(true);
+      signIn(action, { redirect: false })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error('Invalid credentials');
+        }
 
-    // NextAuth Social Sign In
+        if (callback?.ok && !callback?.error) {
+          toast.success('Yeyyy masuk 😆')
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
