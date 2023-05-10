@@ -82,7 +82,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({
             </p>
             <div className="mt-10 flex flex-col gap-y-8">
               <Input
-                disabled={isLoading}
+                disable={isLoading}
                 label="Name" 
                 id="name" 
                 errors={errors} 
